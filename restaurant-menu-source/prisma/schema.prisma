@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  order     Int        @default(0)
+  items     MenuItem[]
+  createdAt DateTime   @default(now())
+}
+
+model MenuItem {
+  id          String           @id @default(cuid())
+  name        String
+  description String?
+  price       Decimal          @db.Decimal(10, 2)
+  categoryId  String?
+  category    Category?        @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  menus       MenuItemOnMenu[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model Menu {
+  id        String           @id @default(cuid())
+  name      String
+  isActive  Boolean          @default(false)
+  items     MenuItemOnMenu[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+model MenuItemOnMenu {
+  menuId     String
+  menuItemId String
+  order      Int      @default(0)
+  menu       Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+
+  @@id([menuId, menuItemId])
+}
