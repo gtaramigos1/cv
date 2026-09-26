@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Voltic — Cloud, AI &amp; Developer Platform</title>
+  <meta name="description" content="Voltic builds cloud infrastructure, AI tooling and developer platforms that help teams ship faster.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Apply the saved/system theme before first paint to avoid a flash
+    try { document.documentElement.dataset.theme = localStorage.getItem("theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"); } catch (e) {}
+  </script>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236d5dfc'/%3E%3Cpath d='M18 4 8 18h7l-1 10 10-14h-7z' fill='white'/%3E%3C/svg%3E">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" id="top">
+    <nav class="nav container" aria-label="Main">
+      <a href="#top" class="logo" aria-label="Voltic home">
+        <span class="logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32"><path d="M18 4 8 18h7l-1 10 10-14h-7z" fill="currentColor"/></svg>
+        </span>
+        Voltic
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#products">Products</a></li>
+        <li><a href="#features">Platform</a></li>
+        <li><a href="#developers">Developers</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#blog">Blog</a></li>
+        <li class="nav-actions">
+          <button class="theme-toggle" aria-label="Toggle dark mode" title="Toggle theme">
+            <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+          <a href="#contact" class="btn btn-primary btn-sm">Get started</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <span class="eyebrow"><span class="dot"></span> New: Voltic AI Runtime is now GA</span>
+          <h1>Build the future <span class="gradient-text">at the speed of thought.</span></h1>
+          <p class="lead">Voltic is the cloud platform for modern engineering teams — deploy apps, run AI models and scale globally from a single developer-friendly workflow.</p>
+          <div class="hero-cta">
+            <a href="#contact" class="btn btn-primary">Start building free</a>
+            <a href="#developers" class="btn btn-ghost">View the docs →</a>
+          </div>
+          <ul class="hero-trust">
+            <li>✓ No credit card required</li>
+            <li>✓ 99.99% uptime SLA</li>
+            <li>✓ SOC 2 Type II</li>
+          </ul>
+        </div>
+
+        <div class="terminal reveal" role="img" aria-label="Terminal showing a Voltic deployment">
+          <div class="terminal-bar">
+            <span></span><span></span><span></span>
+            <p>~/my-app — zsh</p>
+          </div>
+          <pre class="terminal-body"><code id="typed-terminal"></code><span class="cursor">▍</span></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Logos -->
+    <section class="logos" aria-label="Trusted by">
+      <div class="container">
+        <p class="logos-title">Trusted by engineering teams at fast-growing companies</p>
+        <ul class="logos-row">
+          <li>Northwind</li><li>Quantix</li><li>Helio Labs</li><li>Orbitra</li><li>Paperkite</li><li>Lumen&amp;Co</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Products -->
+    <section class="section" id="products">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="kicker">Products</span>
+          <h2>One platform, every layer of your stack</h2>
+          <p>From edge compute to managed AI, Voltic gives you the building blocks to ship production software without stitching together a dozen vendors.</p>
+        </div>
+
+        <div class="card-grid">
+          <article class="card reveal">
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M17.5 19a4.5 4.5 0 1 0-1.4-8.78A6 6 0 1 0 6 16.5"/><path d="M12 12v9M8 17l4 4 4-4"/></svg>
+            </div>
+            <h3>Voltic Cloud</h3>
+            <p>Serverless containers and functions that scale to zero and burst to millions of requests, deployed across 40+ regions.</p>
+            <a href="#pricing" class="card-link">Explore Cloud →</a>
+          </article>
+          <article class="card reveal">
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg>
+            </div>
+            <h3>AI Runtime</h3>
+            <p>Run open and proprietary models on GPU clusters with autoscaling, streaming inference and built-in vector search.</p>
+            <a href="#features" class="card-link">Explore AI →</a>
+          </article>
+          <article class="card reveal">
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            </div>
+            <h3>Data Edge</h3>
+            <p>Globally replicated Postgres and key-value storage with read latency under 10 ms, anywhere your users are.</p>
+            <a href="#features" class="card-link">Explore Data →</a>
+          </article>
+          <article class="card reveal">
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <h3>Shield</h3>
+            <p>Zero-trust networking, WAF and DDoS protection, secrets management and audit logs — secure by default.</p>
+            <a href="#features" class="card-link">Explore Security →</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats">
+      <div class="container stats-grid">
+        <div class="stat reveal"><strong data-count="40" data-suffix="+">0</strong><span>Global regions</span></div>
+        <div class="stat reveal"><strong data-count="12" data-suffix="B">0</strong><span>Requests served daily</span></div>
+        <div class="stat reveal"><strong data-count="99.99" data-decimals="2" data-suffix="%">0</strong><span>Uptime SLA</span></div>
+        <div class="stat reveal"><strong data-count="85" data-suffix="k">0</strong><span>Developers onboard</span></div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section" id="features">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="kicker">Platform</span>
+          <h2>Everything you need to go from idea to production</h2>
+        </div>
+
+        <div class="tabs reveal">
+          <div class="tab-list" role="tablist" aria-label="Platform features">
+            <button role="tab" id="tab-deploy" aria-controls="panel-deploy" aria-selected="true">Deploy</button>
+            <button role="tab" id="tab-observe" aria-controls="panel-observe" aria-selected="false" tabindex="-1">Observe</button>
+            <button role="tab" id="tab-scale" aria-controls="panel-scale" aria-selected="false" tabindex="-1">Scale</button>
+            <button role="tab" id="tab-collab" aria-controls="panel-collab" aria-selected="false" tabindex="-1">Collaborate</button>
+          </div>
+
+          <div class="tab-panel" role="tabpanel" id="panel-deploy" aria-labelledby="tab-deploy">
+            <div>
+              <h3>Git push. That's the deploy.</h3>
+              <p>Connect a repository and every commit gets a preview URL. Merge to main and it's live globally in seconds, with instant rollbacks if anything looks off.</p>
+              <ul class="checklist">
+                <li>Preview environments for every pull request</li>
+                <li>Zero-downtime blue/green releases</li>
+                <li>Framework auto-detection for 30+ stacks</li>
+              </ul>
+            </div>
+            <div class="panel-visual">
+              <div class="pipeline">
+                <div class="step done"><span>Build</span><small>14s</small></div>
+                <div class="step done"><span>Test</span><small>22s</small></div>
+                <div class="step done"><span>Deploy</span><small>6s</small></div>
+                <div class="step live"><span>Live</span><small>40 regions</small></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-panel" role="tabpanel" id="panel-observe" aria-labelledby="tab-observe" hidden>
+            <div>
+              <h3>See everything, in real time.</h3>
+              <p>Logs, traces and metrics are collected automatically, correlated by request, and searchable in milliseconds. Get alerted before your users notice.</p>
+              <ul class="checklist">
+                <li>OpenTelemetry-native tracing</li>
+                <li>Anomaly detection powered by AI</li>
+                <li>Slack, PagerDuty and webhook alerts</li>
+              </ul>
+            </div>
+            <div class="panel-visual">
+              <div class="bars" aria-hidden="true">
+                <span style="--h:40%"></span><span style="--h:55%"></span><span style="--h:35%"></span><span style="--h:70%"></span><span style="--h:60%"></span><span style="--h:85%"></span><span style="--h:50%"></span><span style="--h:65%"></span><span style="--h:90%"></span><span style="--h:75%"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-panel" role="tabpanel" id="panel-scale" aria-labelledby="tab-scale" hidden>
+            <div>
+              <h3>From zero to planet-scale.</h3>
+              <p>Workloads scale automatically based on traffic, queue depth or custom metrics. Pay only for what you use — down to the millisecond.</p>
+              <ul class="checklist">
+                <li>Scale-to-zero with sub-50 ms cold starts</li>
+                <li>Automatic multi-region failover</li>
+                <li>GPU autoscaling for inference</li>
+              </ul>
+            </div>
+            <div class="panel-visual">
+              <div class="globe" aria-hidden="true">
+                <span style="--x:22%;--y:38%"></span><span style="--x:48%;--y:30%"></span><span style="--x:70%;--y:45%"></span><span style="--x:35%;--y:65%"></span><span style="--x:80%;--y:68%"></span><span style="--x:58%;--y:58%"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-panel" role="tabpanel" id="panel-collab" aria-labelledby="tab-collab" hidden>
+            <div>
+              <h3>Built for teams.</h3>
+              <p>Granular roles, SSO, shared environments and comments on previews keep engineering, design and product in sync.</p>
+              <ul class="checklist">
+                <li>SAML SSO &amp; SCIM provisioning</li>
+                <li>Environment-level access controls</li>
+                <li>Comment directly on preview deploys</li>
+              </ul>
+            </div>
+            <div class="panel-visual">
+              <div class="avatars" aria-hidden="true">
+                <span>AK</span><span>MR</span><span>JL</span><span>SP</span><span>+9</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Developers -->
+    <section class="section section-alt" id="developers">
+      <div class="container dev-grid">
+        <div class="reveal">
+          <span class="kicker">Developers</span>
+          <h2>An API you'll actually enjoy using</h2>
+          <p>Typed SDKs for TypeScript, Python, Go and Rust. A CLI that does what you expect. Infrastructure-as-code that reads like your app code.</p>
+          <div class="sdk-pills">
+            <span>TypeScript</span><span>Python</span><span>Go</span><span>Rust</span><span>Terraform</span>
+          </div>
+          <a href="#contact" class="btn btn-primary">Read the quickstart</a>
+        </div>
+        <div class="code-card reveal">
+          <div class="code-head">
+            <span>app.ts</span>
+            <button class="copy-btn" data-copy-target="code-sample">Copy</button>
+          </div>
+<pre><code id="code-sample"><span class="t-k">import</span> { Voltic } <span class="t-k">from</span> <span class="t-s">"@voltic/sdk"</span>;
+
+<span class="t-k">const</span> voltic = <span class="t-k">new</span> <span class="t-f">Voltic</span>();
+
+<span class="t-c">// Deploy a model with autoscaling GPUs</span>
+<span class="t-k">const</span> model = <span class="t-k">await</span> voltic.ai.<span class="t-f">deploy</span>({
+  name: <span class="t-s">"support-bot"</span>,
+  runtime: <span class="t-s">"gpu-a100"</span>,
+  scale: { min: <span class="t-n">0</span>, max: <span class="t-n">20</span> },
+});
+
+<span class="t-k">const</span> reply = <span class="t-k">await</span> model.<span class="t-f">generate</span>(<span class="t-s">"Hello!"</span>);
+console.<span class="t-f">log</span>(reply.text);</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section" aria-labelledby="testimonials-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="kicker">Customers</span>
+          <h2 id="testimonials-title">Loved by builders</h2>
+        </div>
+        <div class="quote-grid">
+          <figure class="quote reveal">
+            <blockquote>“We cut our infrastructure bill by 40% and our deploy time from 20 minutes to under one. Voltic just gets out of the way.”</blockquote>
+            <figcaption><span class="avatar">DN</span><div><strong>Dana Novak</strong><small>CTO, Paperkite</small></div></figcaption>
+          </figure>
+          <figure class="quote reveal">
+            <blockquote>“Shipping our AI features went from a quarter-long project to a weekend. The AI Runtime is ridiculously good.”</blockquote>
+            <figcaption><span class="avatar">RI</span><div><strong>Ravi Iyer</strong><small>Lead Engineer, Quantix</small></div></figcaption>
+          </figure>
+          <figure class="quote reveal">
+            <blockquote>“Preview deploys changed how our whole company works. Design reviews happen on real URLs now.”</blockquote>
+            <figcaption><span class="avatar">SM</span><div><strong>Sofia Marín</strong><small>VP Product, Orbitra</small></div></figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="section section-alt" id="pricing">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="kicker">Pricing</span>
+          <h2>Simple, usage-based pricing</h2>
+          <p>Start free. Upgrade when you're ready. Cancel any time.</p>
+          <div class="billing-toggle" role="group" aria-label="Billing period">
+            <button class="active" data-billing="monthly" aria-pressed="true">Monthly</button>
+            <button data-billing="yearly" aria-pressed="false">Yearly <em>−20%</em></button>
+          </div>
+        </div>
+
+        <div class="price-grid">
+          <article class="price-card reveal">
+            <h3>Hobby</h3>
+            <p class="price"><span class="amount" data-monthly="0" data-yearly="0">$0</span><small>/mo</small></p>
+            <p class="price-desc">For side projects and experiments.</p>
+            <ul class="checklist">
+              <li>3 projects</li>
+              <li>100 GB bandwidth</li>
+              <li>Community support</li>
+            </ul>
+            <a href="#contact" class="btn btn-ghost btn-block">Start free</a>
+          </article>
+          <article class="price-card featured reveal">
+            <span class="badge">Most popular</span>
+            <h3>Pro</h3>
+            <p class="price"><span class="amount" data-monthly="25" data-yearly="20">$25</span><small>/mo per seat</small></p>
+            <p class="price-desc">For professional teams shipping to production.</p>
+            <ul class="checklist">
+              <li>Unlimited projects</li>
+              <li>1 TB bandwidth</li>
+              <li>AI Runtime &amp; GPU access</li>
+              <li>Email support, 24h response</li>
+            </ul>
+            <a href="#contact" class="btn btn-primary btn-block">Start 14-day trial</a>
+          </article>
+          <article class="price-card reveal">
+            <h3>Enterprise</h3>
+            <p class="price"><span class="amount">Custom</span></p>
+            <p class="price-desc">For organizations with advanced needs.</p>
+            <ul class="checklist">
+              <li>SSO, SCIM &amp; audit logs</li>
+              <li>Dedicated infrastructure</li>
+              <li>99.99% SLA</li>
+              <li>24/7 dedicated support</li>
+            </ul>
+            <a href="#contact" class="btn btn-ghost btn-block">Contact sales</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Blog -->
+    <section class="section" id="blog">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="kicker">Blog</span>
+          <h2>Latest from the engineering team</h2>
+        </div>
+        <div class="blog-grid">
+          <article class="post reveal">
+            <div class="post-cover c1" aria-hidden="true"></div>
+            <div class="post-body">
+              <span class="tag">AI</span>
+              <h3>How we serve 1M inference requests per minute on spot GPUs</h3>
+              <p>A deep dive into the scheduler behind Voltic AI Runtime.</p>
+              <time datetime="2026-09-18">Sep 18, 2026 · 8 min read</time>
+            </div>
+          </article>
+          <article class="post reveal">
+            <div class="post-cover c2" aria-hidden="true"></div>
+            <div class="post-body">
+              <span class="tag">Infrastructure</span>
+              <h3>Rewriting our edge proxy in Rust: a year later</h3>
+              <p>Latency, memory and the lessons we didn't expect.</p>
+              <time datetime="2026-09-04">Sep 4, 2026 · 12 min read</time>
+            </div>
+          </article>
+          <article class="post reveal">
+            <div class="post-cover c3" aria-hidden="true"></div>
+            <div class="post-body">
+              <span class="tag">Security</span>
+              <h3>Zero-trust by default: the design of Voltic Shield</h3>
+              <p>Why every request is authenticated, even inside your VPC.</p>
+              <time datetime="2026-08-21">Aug 21, 2026 · 6 min read</time>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section section-alt" aria-labelledby="faq-title">
+      <div class="container narrow">
+        <div class="section-head reveal">
+          <span class="kicker">FAQ</span>
+          <h2 id="faq-title">Frequently asked questions</h2>
+        </div>
+        <div class="faq reveal">
+          <details>
+            <summary>Can I migrate from AWS, GCP or Azure?</summary>
+            <p>Yes. Our migration toolkit imports containers, databases and DNS, and our solutions team offers free migration assistance on Pro and Enterprise plans.</p>
+          </details>
+          <details>
+            <summary>Which languages and frameworks are supported?</summary>
+            <p>Anything that runs in a container. We auto-detect Node.js, Python, Go, Rust, Ruby, Java, PHP and .NET, plus frameworks like Next.js, Django, Rails and Spring.</p>
+          </details>
+          <details>
+            <summary>How does usage-based billing work?</summary>
+            <p>You pay a flat per-seat fee plus metered compute, bandwidth and storage beyond the included amounts. Spending limits and alerts keep surprises away.</p>
+          </details>
+          <details>
+            <summary>Is my data secure?</summary>
+            <p>All data is encrypted at rest and in transit. Voltic is SOC 2 Type II and ISO 27001 certified, and GDPR and HIPAA compliant.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact / CTA -->
+    <section class="section cta" id="contact">
+      <div class="container cta-grid">
+        <div class="reveal">
+          <h2>Ready to build something great?</h2>
+          <p>Create a free account in seconds, or tell us about your project and our team will reach out.</p>
+        </div>
+        <form class="contact-form reveal" novalidate>
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="email">Work email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="message">What are you building?</label>
+            <textarea id="message" name="message" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Get started</button>
+          <p class="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a href="#top" class="logo">
+          <span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M18 4 8 18h7l-1 10 10-14h-7z" fill="currentColor"/></svg></span>
+          Voltic
+        </a>
+        <p>The cloud platform for teams who build the future.</p>
+      </div>
+      <nav aria-label="Products"><h4>Products</h4><ul><li><a href="#products">Cloud</a></li><li><a href="#products">AI Runtime</a></li><li><a href="#products">Data Edge</a></li><li><a href="#products">Shield</a></li></ul></nav>
+      <nav aria-label="Resources"><h4>Resources</h4><ul><li><a href="#developers">Docs</a></li><li><a href="#blog">Blog</a></li><li><a href="#pricing">Pricing</a></li><li><a href="#contact">Status</a></li></ul></nav>
+      <nav aria-label="Company"><h4>Company</h4><ul><li><a href="#contact">About</a></li><li><a href="#contact">Careers</a></li><li><a href="#contact">Contact</a></li><li><a href="#contact">Privacy</a></li></ul></nav>
+    </div>
+    <div class="container footer-bottom">
+      <p>© <span id="year">2026</span> Voltic, Inc. All rights reserved.</p>
+      <a href="#top" class="back-top">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
