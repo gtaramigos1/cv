@@ -1,0 +1,77 @@
+{
+  "currency": "€",
+  "categories": [
+    {
+      "id": "appetizers",
+      "name": "Ορεκτικά",
+      "items": [
+        { "id": "tzatziki", "name": "Τζατζίκι", "price": 4.5 },
+        { "id": "fava", "name": "Φάβα", "price": 5 },
+        { "id": "potatoes", "name": "Πατάτες τηγανητές", "price": 4, "modifiers": ["Με τυρί", "Χωρίς αλάτι"] },
+        { "id": "saganaki", "name": "Σαγανάκι", "price": 6.5 }
+      ]
+    },
+    {
+      "id": "salads",
+      "name": "Σαλάτες",
+      "items": [
+        { "id": "horiatiki", "name": "Χωριάτικη", "price": 8.5, "modifiers": ["Χωρίς κρεμμύδι", "Χωρίς ελιές", "Χωρίς φέτα"] },
+        { "id": "caesar", "name": "Caesar", "price": 9, "modifiers": ["Χωρίς κοτόπουλο", "Extra dressing"] }
+      ]
+    },
+    {
+      "id": "grill",
+      "name": "Ψητά",
+      "items": [
+        { "id": "souvlaki-pork", "name": "Σουβλάκι χοιρινό", "price": 3, "modifiers": ["Χωρίς τζατζίκι", "Χωρίς κρεμμύδι", "Με πατάτες"] },
+        { "id": "souvlaki-chicken", "name": "Σουβλάκι κοτόπουλο", "price": 3.2, "modifiers": ["Χωρίς τζατζίκι", "Χωρίς κρεμμύδι", "Με πατάτες"] },
+        { "id": "bifteki", "name": "Μπιφτέκι μερίδα", "price": 11, "modifiers": ["Καλοψημένο", "Μέτριο"] },
+        { "id": "chops", "name": "Παϊδάκια", "price": 15, "modifiers": ["Καλοψημένα", "Μέτρια"] }
+      ]
+    },
+    {
+      "id": "burgers",
+      "name": "Burgers",
+      "items": [
+        { "id": "burger-classic", "name": "Burger Classic", "price": 10, "modifiers": ["Χωρίς κρεμμύδι", "Χωρίς ντομάτα", "Extra τυρί", "Extra μπέικον", "Καλοψημένο"] },
+        { "id": "burger-chicken", "name": "Chicken Burger", "price": 9.5, "modifiers": ["Χωρίς σως", "Extra τυρί"] }
+      ]
+    },
+    {
+      "id": "mains",
+      "name": "Κυρίως",
+      "items": [
+        { "id": "moussaka", "name": "Μουσακάς", "price": 11 },
+        { "id": "pastitsio", "name": "Παστίτσιο", "price": 10.5 },
+        { "id": "carbonara", "name": "Καρμπονάρα", "price": 10, "modifiers": ["Χωρίς μπέικον", "Extra παρμεζάνα"] }
+      ]
+    },
+    {
+      "id": "desserts",
+      "name": "Γλυκά",
+      "items": [
+        { "id": "chocopie", "name": "Σοκολατόπιτα", "price": 5.5, "modifiers": ["Με παγωτό"] },
+        { "id": "yogurt", "name": "Γιαούρτι με μέλι", "price": 5 }
+      ]
+    },
+    {
+      "id": "coffee",
+      "name": "Καφέδες",
+      "items": [
+        { "id": "freddo-espresso", "name": "Freddo Espresso", "price": 3.5, "modifiers": ["Σκέτος", "Μέτριος", "Γλυκός", "Με γάλα"] },
+        { "id": "freddo-cappuccino", "name": "Freddo Cappuccino", "price": 4, "modifiers": ["Σκέτος", "Μέτριος", "Γλυκός"] },
+        { "id": "greek-coffee", "name": "Ελληνικός", "price": 2.5, "modifiers": ["Σκέτος", "Μέτριος", "Γλυκός", "Διπλός"] }
+      ]
+    },
+    {
+      "id": "drinks",
+      "name": "Ποτά",
+      "items": [
+        { "id": "water", "name": "Νερό 1L", "price": 1.5 },
+        { "id": "cola", "name": "Coca-Cola", "price": 3 },
+        { "id": "beer", "name": "Μπύρα", "price": 4.5 },
+        { "id": "wine-glass", "name": "Κρασί ποτήρι", "price": 4.5, "modifiers": ["Λευκό", "Κόκκινο", "Ροζέ"] }
+      ]
+    }
+  ]
+}

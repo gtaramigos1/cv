@@ -7,6 +7,7 @@ const { config } = require('./config');
 const { openDb } = require('./db');
 const { createOrderService, OrderError } = require('./orders');
 const { startWebhookDispatcher } = require('./erpWebhook');
+const { createPosRouter } = require('./pos');
 
 function safeEqual(a, b) {
   const ab = Buffer.from(a);
@@ -59,6 +60,12 @@ function createApp({ db, cfg = config }) {
   });
 
   app.use('/api/erp', erp);
+
+  // ---------- Λήψη παραγγελιών από το κατάστημα (/pos) ----------
+  app.use('/api/pos', createPosRouter({
+    db, orders, menuFile: cfg.menuFile || path.join(__dirname, '..', 'config', 'menu.json'),
+  }));
+  app.get('/pos', (req, res) => res.sendFile(path.join(__dirname, '..', 'public', 'pos.html')));
 
   // ---------- API για τις οθόνες κουζίνας ----------
   function stationParam(req) {

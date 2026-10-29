@@ -239,7 +239,8 @@
       document.querySelector('.actions').classList.add('hidden');
       $('picker').classList.remove('hidden');
       $('pickerGrid').innerHTML = stations.map((s) => `<a class="btn" href="?station=${encodeURIComponent(s.id)}">${esc(s.name)}</a>`).join('')
-        + '<a class="btn ghost" href="?station=expo">Expo (πάσο)</a>';
+        + '<a class="btn ghost" href="?station=expo">Expo (πάσο)</a>'
+        + '<a class="btn ghost" href="/pos">Λήψη παραγγελιών</a>';
       return;
     }
     station = stations.find((s) => s.id === stationId) || null;

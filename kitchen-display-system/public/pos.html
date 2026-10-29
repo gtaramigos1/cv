@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Λήψη Παραγγελιών</title>
+  <link rel="stylesheet" href="pos.css">
+</head>
+<body>
+  <header class="topbar">
+    <nav class="tabs">
+      <button class="tab active" data-view="new">Νέα παραγγελία</button>
+      <button class="tab" data-view="orders">Παραγγελίες <span class="pill" id="activeCount">0</span></button>
+    </nav>
+    <div class="top-right">
+      <label class="waiter">Σερβιτόρος <input id="waiter" placeholder="Όνομα" autocomplete="off"></label>
+      <a class="link" href="/" title="Οθόνες κουζίνας">KDS</a>
+      <span class="conn" id="conn" title="Σύνδεση"></span>
+    </div>
+  </header>
+
+  <!-- Νέα παραγγελία -->
+  <main class="view pos" id="viewNew">
+    <section class="menu">
+      <div class="cats" id="cats"></div>
+      <div class="items" id="items"></div>
+    </section>
+
+    <aside class="cart" id="cart">
+      <div class="cart-head">
+        <div class="seg" id="orderType">
+          <button data-type="dine_in" class="on">Τραπέζι</button>
+          <button data-type="takeaway">Πακέτο</button>
+          <button data-type="delivery">Delivery</button>
+        </div>
+        <input id="table" class="big-input" inputmode="numeric" placeholder="Αρ. τραπεζιού" autocomplete="off">
+        <input id="customer" class="big-input hidden" placeholder="Όνομα πελάτη" autocomplete="off">
+        <button class="close-cart" id="closeCart" aria-label="Κλείσιμο">✕</button>
+      </div>
+
+      <ul class="lines" id="lines"></ul>
+
+      <div class="cart-foot">
+        <textarea id="orderNotes" rows="2" placeholder="Σημειώσεις παραγγελίας (π.χ. αλλεργίες)"></textarea>
+        <label class="rush"><input type="checkbox" id="rush"> Επείγον</label>
+        <div class="total"><span>Σύνολο</span><strong id="total">0,00 €</strong></div>
+        <div class="foot-actions">
+          <button class="btn ghost" id="clearBtn">Καθαρισμός</button>
+          <button class="btn primary" id="sendBtn">Αποστολή στην κουζίνα</button>
+        </div>
+      </div>
+    </aside>
+
+    <button class="cart-bar" id="cartBar">
+      <span id="cartBarCount">Καλάθι (0)</span><strong id="cartBarTotal">0,00 €</strong>
+    </button>
+  </main>
+
+  <!-- Παραγγελίες -->
+  <main class="view hidden" id="viewOrders">
+    <div class="orders" id="ordersList"></div>
+  </main>
+
+  <!-- Επεξεργασία γραμμής -->
+  <div class="overlay hidden" id="lineDialog">
+    <div class="dialog">
+      <h2 id="ldName"></h2>
+      <div class="stepper">
+        <button class="btn ghost" data-step="-1">−</button>
+        <span id="ldQty">1</span>
+        <button class="btn ghost" data-step="1">+</button>
+      </div>
+      <div class="field-label">Επιλογές</div>
+      <div class="chips" id="ldMods"></div>
+      <div class="field-label">Σημείωση</div>
+      <input id="ldNotes" class="big-input" placeholder="π.χ. καλοψημένο" autocomplete="off">
+      <div class="field-label">Σερβίρισμα</div>
+      <div class="seg" id="ldCourse">
+        <button data-course="1" class="on">Μαζί</button>
+        <button data-course="2">Μετά</button>
+        <button data-course="3">Στο τέλος</button>
+      </div>
+      <div class="dialog-actions">
+        <button class="btn danger" id="ldRemove">Αφαίρεση</button>
+        <button class="btn primary" id="ldDone">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+
+  <script src="pos.js"></script>
+</body>
+</html>
