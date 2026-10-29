@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const Database = require('better-sqlite3');
+// Ενσωματωμένη SQLite του Node (χωρίς native εξαρτήσεις / μεταγλώττιση).
+const { DatabaseSync } = require('node:sqlite');
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS orders (
@@ -53,10 +54,30 @@ CREATE INDEX IF NOT EXISTS idx_outbox_due ON outbox(delivered_at, next_attempt_a
 
 function openDb(file) {
   if (file !== ':memory:') fs.mkdirSync(path.dirname(file), { recursive: true });
-  const db = new Database(file);
-  db.pragma('journal_mode = WAL');
-  db.pragma('foreign_keys = ON');
+  const db = new DatabaseSync(file);
+  db.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;');
   db.exec(SCHEMA);
+
+  // Τα statements δέχονται αντικείμενα με επιπλέον πεδία (π.χ. όλο το payload της παραγγελίας).
+  const prepare = db.prepare.bind(db);
+  db.prepare = (sql) => {
+    const stmt = prepare(sql);
+    stmt.setAllowUnknownNamedParameters(true);
+    return stmt;
+  };
+
+  // db.transaction(fn) → συνάρτηση που τρέχει το fn σε συναλλαγή (rollback σε σφάλμα).
+  db.transaction = (fn) => (...args) => {
+    db.exec('BEGIN IMMEDIATE');
+    try {
+      const result = fn(...args);
+      db.exec('COMMIT');
+      return result;
+    } catch (err) {
+      db.exec('ROLLBACK');
+      throw err;
+    }
+  };
   return db;
 }
 

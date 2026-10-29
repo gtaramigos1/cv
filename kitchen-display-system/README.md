@@ -22,6 +22,8 @@
 
 ## Εκκίνηση
 
+Απαιτείται **Node.js 22.13 ή νεότερο**. Η βάση είναι η ενσωματωμένη SQLite του Node, άρα δεν χρειάζεται Visual Studio ούτε άλλα εργαλεία μεταγλώττισης.
+
 ```bash
 cd kitchen-display-system
 npm install
@@ -30,6 +32,8 @@ npm install
 ```bash
 ERP_API_KEY=change-me npm start
 ```
+
+Στα Windows (cmd) η εκκίνηση γίνεται με `set ERP_API_KEY=change-me && npm start`.
 
 Άνοιξε `http://<ip-server>:3000` σε κάθε οθόνη και διάλεξε station, ή πήγαινε κατευθείαν σε `/?station=grill` ή `/?station=expo`.
 
