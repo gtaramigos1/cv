@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kitchen Display</title>
+  <link rel="stylesheet" href="kds.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="station-name" id="stationName">KDS</span>
+      <span class="counts" id="counts"></span>
+    </div>
+    <div class="actions">
+      <button id="btnAllDay" class="btn ghost" title="Σύνολα ειδών σε αναμονή">Σύνολα</button>
+      <button id="btnRecall" class="btn ghost" title="Πρόσφατα ολοκληρωμένες">Ανάκληση</button>
+      <a class="btn ghost" href="/" title="Αλλαγή οθόνης">Οθόνη</a>
+      <span class="conn" id="conn" title="Σύνδεση"></span>
+      <span class="clock" id="clock"></span>
+    </div>
+  </header>
+
+  <aside class="allday hidden" id="allDay"></aside>
+  <main class="board" id="board"></main>
+
+  <section class="picker hidden" id="picker">
+    <h1>Επιλογή οθόνης</h1>
+    <div class="picker-grid" id="pickerGrid"></div>
+  </section>
+
+  <div class="overlay hidden" id="recallOverlay">
+    <div class="dialog">
+      <div class="dialog-head">
+        <h2>Ανάκληση παραγγελίας</h2>
+        <button class="btn ghost" id="recallClose">Κλείσιμο</button>
+      </div>
+      <div id="recallList" class="recall-list"></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="startOverlay">
+    <button class="btn big" id="startBtn">Έναρξη οθόνης</button>
+    <p class="hint">Ενεργοποιεί ήχο ειδοποίησης και πλήρη οθόνη</p>
+  </div>
+
+  <script src="kds.js"></script>
+</body>
+</html>

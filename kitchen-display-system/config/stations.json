@@ -1,0 +1,21 @@
+{
+  "defaultStation": "kitchen",
+  "stations": [
+    { "id": "grill",   "name": "Ψησταριά",  "warnMinutes": 8,  "lateMinutes": 15 },
+    { "id": "kitchen", "name": "Κουζίνα",   "warnMinutes": 10, "lateMinutes": 20 },
+    { "id": "cold",    "name": "Κρύα / Σαλάτες", "warnMinutes": 5, "lateMinutes": 10 },
+    { "id": "bar",     "name": "Μπαρ",      "warnMinutes": 4,  "lateMinutes": 8 }
+  ],
+  "categoryRouting": {
+    "burgers": "grill",
+    "grill": "grill",
+    "souvlaki": "grill",
+    "mains": "kitchen",
+    "pasta": "kitchen",
+    "appetizers": "kitchen",
+    "salads": "cold",
+    "desserts": "cold",
+    "drinks": "bar",
+    "coffee": "bar"
+  }
+}
