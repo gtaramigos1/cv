@@ -13,9 +13,8 @@
       <strong>Διαχείριση μενού</strong>
       <span class="save-state" id="saveState"></span>
     </div>
+    <nav class="admin-nav" id="adminNav"></nav>
     <div class="top-right">
-      <a class="link" href="/pos">POS</a>
-      <a class="link" href="/">KDS</a>
       <button class="btn ghost" id="revertBtn" disabled>Αναίρεση</button>
       <button class="btn primary" id="saveBtn" disabled>Αποθήκευση</button>
     </div>
@@ -30,17 +29,9 @@
     <section class="cat-editor" id="catEditor"></section>
   </main>
 
-  <div class="overlay hidden" id="pinDialog">
-    <form class="dialog" id="pinForm">
-      <h2>PIN διαχείρισης</h2>
-      <input id="pinInput" class="big-input" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN">
-      <div class="pin-error" id="pinError"></div>
-      <button class="btn primary" type="submit">Είσοδος</button>
-    </form>
-  </div>
-
   <div class="toasts" id="toasts"></div>
 
+  <script src="/common.js"></script>
   <script src="/menu-admin.js"></script>
 </body>
 </html>

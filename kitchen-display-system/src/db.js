@@ -50,13 +50,39 @@ CREATE TABLE IF NOT EXISTS outbox (
   last_error      TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_outbox_due ON outbox(delivered_at, next_attempt_at);
+
+CREATE TABLE IF NOT EXISTS users (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  name        TEXT NOT NULL,
+  role        TEXT NOT NULL,
+  pin_key     TEXT NOT NULL UNIQUE,
+  active      INTEGER NOT NULL DEFAULT 1,
+  created_at  TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+  token_hash  TEXT PRIMARY KEY,
+  user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at  TEXT NOT NULL,
+  expires_at  TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_orders_received ON orders(received_at);
 `;
+
+// Στήλες που προστέθηκαν σε επόμενες εκδόσεις (για βάσεις που υπάρχουν ήδη).
+const MIGRATIONS = [
+  { table: 'order_items', column: 'unit_price', sql: 'ALTER TABLE order_items ADD COLUMN unit_price REAL' },
+];
 
 function openDb(file) {
   if (file !== ':memory:') fs.mkdirSync(path.dirname(file), { recursive: true });
   const db = new DatabaseSync(file);
   db.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;');
   db.exec(SCHEMA);
+  for (const m of MIGRATIONS) {
+    const cols = db.prepare(`PRAGMA table_info(${m.table})`).all().map((c) => c.name);
+    if (!cols.includes(m.column)) db.exec(m.sql);
+  }
 
   // Τα statements δέχονται αντικείμενα με επιπλέον πεδία (π.χ. όλο το payload της παραγγελίας).
   const prepare = db.prepare.bind(db);

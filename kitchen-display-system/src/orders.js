@@ -43,10 +43,16 @@ function validateOrderPayload(body) {
     if (seen.has(lineId)) throw new OrderError(400, `items[${i}]: διπλό line_id "${lineId}"`);
     seen.add(lineId);
     const course = it.course === undefined ? 1 : Number.parseInt(it.course, 10);
+    let price = null;
+    if (it.price !== undefined && it.price !== null && it.price !== '') {
+      price = Number(it.price);
+      if (!Number.isFinite(price) || price < 0) throw new OrderError(400, `items[${i}]: μη έγκυρη τιμή (price)`);
+    }
     return {
       lineId,
       name,
       qty,
+      price,
       category: str(it.category),
       station: str(it.station),
       course: Number.isFinite(course) && course > 0 ? course : 1,
@@ -93,10 +99,10 @@ function createOrderService(db, stationsConfig, { onChange = () => {} } = {}) {
       UPDATE orders SET order_type=@orderType, table_label=@table, customer_name=@customerName,
              waiter=@waiter, notes=@notes, priority=@priority, updated_at=@ts WHERE id=@id`),
     insertItem: db.prepare(`
-      INSERT INTO order_items (order_id, line_id, name, qty, category, station, course, modifiers, notes, status, added_at)
-      VALUES (@orderId, @lineId, @name, @qty, @category, @station, @course, @modifiers, @notes, 'pending', @ts)`),
+      INSERT INTO order_items (order_id, line_id, name, qty, unit_price, category, station, course, modifiers, notes, status, added_at)
+      VALUES (@orderId, @lineId, @name, @qty, @price, @category, @station, @course, @modifiers, @notes, 'pending', @ts)`),
     updateItem: db.prepare(`
-      UPDATE order_items SET name=@name, qty=@qty, category=@category, station=@station, course=@course,
+      UPDATE order_items SET name=@name, qty=@qty, unit_price=@price, category=@category, station=@station, course=@course,
              modifiers=@modifiers, notes=@notes, status=@status, done_at=@doneAt WHERE id=@id`),
     setItemStatus: db.prepare('UPDATE order_items SET status=?, done_at=? WHERE id=?'),
     setOrderStatus: db.prepare(`
@@ -121,6 +127,7 @@ function createOrderService(db, stationsConfig, { onChange = () => {} } = {}) {
       line_id: it.line_id,
       name: it.name,
       qty: it.qty,
+      price: it.unit_price,
       category: it.category,
       station: it.station,
       course: it.course,

@@ -3,12 +3,17 @@ const path = require('path');
 const crypto = require('crypto');
 const express = require('express');
 const { WebSocketServer } = require('ws');
-const { config } = require('./config');
+const { config, prepareDataDir } = require('./config');
 const { openDb } = require('./db');
 const { createOrderService, OrderError } = require('./orders');
 const { startWebhookDispatcher } = require('./erpWebhook');
 const { createPosRouter, createMenuAdminRouter } = require('./pos');
 const { MenuError } = require('./menu');
+const { createAuth, AuthError } = require('./auth');
+const { createStatsRouter } = require('./stats');
+
+const PUBLIC = path.join(__dirname, '..', 'public');
+const page = (file) => (req, res) => res.sendFile(path.join(PUBLIC, file));
 
 function safeEqual(a, b) {
   const ab = Buffer.from(a);
@@ -18,8 +23,17 @@ function safeEqual(a, b) {
 
 function createApp({ db, cfg = config }) {
   const app = express();
+  if (cfg.behindProxy) app.set('trust proxy', 1); // σωστό IP/HTTPS πίσω από proxy του cloud
   const server = http.createServer(app);
-  const wss = new WebSocketServer({ server, path: '/ws' });
+  const auth = createAuth({ db, secret: cfg.secret });
+  const { requireRole, requirePage } = auth;
+
+  // Μόνο συνδεδεμένοι χρήστες λαμβάνουν ενημερώσεις σε πραγματικό χρόνο.
+  const wss = new WebSocketServer({
+    server,
+    path: '/ws',
+    verifyClient: (info, done) => done(Boolean(auth.userFromRequest(info.req)), 401),
+  });
 
   function send(payload) {
     const msg = JSON.stringify(payload);
@@ -31,7 +45,24 @@ function createApp({ db, cfg = config }) {
   const stationIds = new Set(cfg.stations.stations.map((s) => s.id));
 
   app.use(express.json({ limit: '1mb' }));
-  app.use(express.static(path.join(__dirname, '..', 'public')));
+  app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Referrer-Policy', 'same-origin');
+    next();
+  });
+  app.use(auth.attachUser);
+
+  // ---------- Σελίδες ----------
+  app.get('/login', page('login.html'));
+  app.get('/', requirePage(), page('index.html'));
+  app.get('/pos', requirePage('waiter', 'admin'), page('pos.html'));
+  app.get('/admin/menu', requirePage('admin'), page('menu-admin.html'));
+  app.get('/admin/users', requirePage('admin'), page('users-admin.html'));
+  app.get('/admin/stats', requirePage('admin'), page('stats.html'));
+  // Στατικά αρχεία (css/js). Οι σελίδες .html σερβίρονται μόνο μέσω των παραπάνω routes.
+  app.use((req, res, next) => (req.path.endsWith('.html') ? res.status(404).end() : next()));
+  app.use(express.static(PUBLIC, { index: false }));
 
   // ---------- ERP API (απαιτεί κλειδί) ----------
   function requireErpKey(req, res, next) {
@@ -63,19 +94,22 @@ function createApp({ db, cfg = config }) {
 
   app.use('/api/erp', erp);
 
+  // Από εδώ και κάτω: API για τους χρήστες του καταστήματος (σύνδεση με PIN).
+  app.use('/api', auth.sameOrigin);
+  app.use('/api', auth.router);
+  app.use('/api', createStatsRouter({ db, stations: cfg.stations, requireRole }));
+
   // ---------- Λήψη παραγγελιών από το κατάστημα (/pos) ----------
   const menuFile = cfg.menuFile || path.join(__dirname, '..', 'config', 'menu.json');
-  app.use('/api/pos', createPosRouter({ db, orders, menuFile }));
-  app.get('/pos', (req, res) => res.sendFile(path.join(__dirname, '..', 'public', 'pos.html')));
+  app.use('/api/pos', createPosRouter({ db, orders, menuFile, requireRole }));
 
   // ---------- Διαχείριση μενού (/admin/menu) ----------
   app.use('/api/admin', createMenuAdminRouter({
     menuFile,
     stations: cfg.stations,
-    adminPin: cfg.adminPin,
+    requireRole,
     onMenuChange: () => send({ type: 'menu' }), // τα POS ξαναφορτώνουν το μενού
   }));
-  app.get('/admin/menu', (req, res) => res.sendFile(path.join(__dirname, '..', 'public', 'menu-admin.html')));
 
   // ---------- API για τις οθόνες κουζίνας ----------
   function stationParam(req) {
@@ -89,6 +123,8 @@ function createApp({ db, cfg = config }) {
     if (!Number.isFinite(id)) throw new OrderError(400, 'Μη έγκυρο id');
     return id;
   };
+
+  app.use(['/api/config', '/api/orders', '/api/items'], requireRole());
 
   app.get('/api/config', (req, res) => {
     res.json({ stations: cfg.stations.stations });
@@ -118,7 +154,9 @@ function createApp({ db, cfg = config }) {
 
   // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
-    if (err instanceof OrderError || err instanceof MenuError) return res.status(err.status).json({ error: err.message });
+    if (err instanceof OrderError || err instanceof MenuError || err instanceof AuthError) {
+      return res.status(err.status).json({ error: err.message });
+    }
     if (err.type === 'entity.parse.failed') return res.status(400).json({ error: 'Μη έγκυρο JSON' });
     console.error(err);
     res.status(500).json({ error: 'Εσωτερικό σφάλμα' });
@@ -139,12 +177,21 @@ function createApp({ db, cfg = config }) {
   });
   server.on('close', () => clearInterval(ping));
 
-  return { app, server, orders };
+  return { app, server, orders, auth };
 }
 
 if (require.main === module) {
+  prepareDataDir(config);
   const db = openDb(config.dbFile);
-  const { server } = createApp({ db });
+  const { server, auth } = createApp({ db });
+  const firstPin = auth.ensureInitialAdmin(config.initialAdminPin);
+  if (firstPin) {
+    console.log('\n==============================================================');
+    console.log('  Δημιουργήθηκε ο πρώτος χρήστης «Διαχειριστής».');
+    console.log(`  PIN σύνδεσης: ${firstPin}`);
+    console.log('  Άλλαξέ το από τη σελίδα Χρήστες μετά την πρώτη σύνδεση.');
+    console.log('==============================================================\n');
+  }
   const dispatcher = startWebhookDispatcher(db, { url: config.erpWebhookUrl, secret: config.erpWebhookSecret });
   if (!config.erpApiKey) console.warn('[kds] ΠΡΟΣΟΧΗ: ERP_API_KEY δεν έχει οριστεί — το ERP API είναι ανοιχτό');
   server.listen(config.port, () => {

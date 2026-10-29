@@ -1,41 +1,15 @@
 (() => {
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const session = {
-    get(k) { try { return sessionStorage.getItem(k) || ''; } catch { return ''; } },
-    set(k, v) { try { sessionStorage.setItem(k, v); } catch { /* χωρίς αποθήκευση */ } },
-  };
 
   let menu = null;        // το μενού που επεξεργαζόμαστε
   let saved = '';          // JSON της τελευταίας αποθηκευμένης μορφής, για σύγκριση
   let stations = [];
   let defaultStation = '';
   let sel = 0;             // επιλεγμένη κατηγορία
-  let pin = session.get('admin.pin');
 
-  function toast(text, kind = '') {
-    const el = document.createElement('div');
-    el.className = `toast ${kind}`;
-    el.textContent = text;
-    $('toasts').appendChild(el);
-    setTimeout(() => el.remove(), 3500);
-  }
-
-  async function api(method, path, body) {
-    const res = await fetch(path, {
-      method,
-      headers: { 'Content-Type': 'application/json', ...(pin ? { 'X-Admin-Pin': pin } : {}) },
-      body: body ? JSON.stringify(body) : undefined,
-    });
-    const data = await res.json().catch(() => ({}));
-    if (res.status === 401 && data.pinRequired) {
-      const err = new Error(data.error);
-      err.pinRequired = true;
-      throw err;
-    }
-    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-    return data;
-  }
+  const toast = KDS.toast;
+  const api = KDS.api;
 
   // ---------- Κατάσταση αλλαγών ----------
   const isDirty = () => menu && JSON.stringify(menu) !== saved;
@@ -268,8 +242,7 @@
       $('saveState').className = 'save-state saved';
       toast('Το μενού αποθηκεύτηκε — τα POS ενημερώθηκαν', 'ok');
     } catch (e) {
-      if (e.pinRequired) askPin(e.message);
-      else toast(`Σφάλμα: ${e.message}`, 'err');
+      toast(`Σφάλμα: ${e.message}`, 'err');
       updateDirty();
     }
   }
@@ -292,21 +265,6 @@
     render();
   }
 
-  // ---------- PIN ----------
-  function askPin(message) {
-    $('pinError').textContent = pin ? message : '';
-    $('pinDialog').classList.remove('hidden');
-    $('pinInput').value = '';
-    $('pinInput').focus();
-  }
-  $('pinForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    pin = $('pinInput').value.trim();
-    session.set('admin.pin', pin);
-    $('pinDialog').classList.add('hidden');
-    load();
-  });
-
   async function load() {
     try {
       const data = await api('GET', '/api/admin/menu');
@@ -314,10 +272,10 @@
       defaultStation = data.defaultStation;
       setMenu(data.menu);
     } catch (e) {
-      if (e.pinRequired) askPin(e.message);
-      else toast(`Σφάλμα φόρτωσης: ${e.message}`, 'err');
+      toast(`Σφάλμα φόρτωσης: ${e.message}`, 'err');
     }
   }
 
+  KDS.adminNav($('adminNav'));
   load();
 })();

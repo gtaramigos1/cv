@@ -5,7 +5,7 @@ const { openDb } = require('../src/db');
 const { loadStations } = require('../src/config');
 const { createOrderService, OrderError } = require('../src/orders');
 const { startWebhookDispatcher, sign } = require('../src/erpWebhook');
-const { createApp } = require('../src/server');
+const { startApp } = require('./helpers');
 
 const stations = loadStations(path.join(__dirname, '..', 'config', 'stations.json'));
 
@@ -154,27 +154,24 @@ test('webhook: υπογραφή, παράδοση και επανάληψη σε
 });
 
 test('HTTP API: έλεγχος κλειδιού και ροή', async (t) => {
-  const db = openDb(':memory:');
-  const { server } = createApp({ db, cfg: { erpApiKey: 'k', stations, completedRetentionMinutes: 60 } });
-  await new Promise((r) => server.listen(0, r));
-  t.after(() => new Promise((r) => server.close(r)));
-  const base = `http://127.0.0.1:${server.address().port}`;
-  const post = (p, body, headers = {}) => fetch(base + p, {
-    method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body),
-  });
+  const { anon, loginAs } = await startApp(t, { erpApiKey: 'k' });
+  const erp = (body, headers) => anon.req('POST', '/api/erp/orders', body, headers);
 
-  assert.equal((await post('/api/erp/orders', sample())).status, 401);
-  const res = await post('/api/erp/orders', sample(), { Authorization: 'Bearer k' });
+  assert.equal((await erp(sample())).status, 401);
+  const res = await erp(sample(), { Authorization: 'Bearer k' });
   assert.equal(res.status, 201);
   const order = await res.json();
-  assert.equal((await post('/api/erp/orders', sample(), { 'X-API-Key': 'k' })).status, 200);
+  assert.equal((await erp(sample(), { 'X-API-Key': 'k' })).status, 200);
 
-  const grill = await (await fetch(`${base}/api/orders?station=grill`)).json();
-  assert.equal(grill.length, 1);
-  assert.equal((await fetch(`${base}/api/orders?station=nope`)).status, 400);
+  // Οι οθόνες χρειάζονται σύνδεση χρήστη.
+  assert.equal((await anon.req('GET', '/api/orders?station=grill')).status, 401);
+  const kitchen = await loginAs('kitchen');
+  const grill = await kitchen.json('GET', '/api/orders?station=grill');
+  assert.equal(grill.body.length, 1);
+  assert.equal((await kitchen.req('GET', '/api/orders?station=nope')).status, 400);
 
-  const bumped = await (await post(`/api/orders/${order.id}/bump?station=grill`, {})).json();
-  assert.equal(bumped.status, 'in_progress');
-  const bad = await post('/api/erp/orders', { external_id: 'x' }, { Authorization: 'Bearer k' });
+  const bumped = await kitchen.json('POST', `/api/orders/${order.id}/bump?station=grill`, {});
+  assert.equal(bumped.body.status, 'in_progress');
+  const bad = await erp({ external_id: 'x' }, { Authorization: 'Bearer k' });
   assert.equal(bad.status, 400);
 });

@@ -20,6 +20,7 @@
       body: opts.body ? JSON.stringify(opts.body) : undefined,
     });
     const data = await res.json().catch(() => ({}));
+    if (res.status === 401 && data.loginRequired) KDS.toLogin();
     if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
     return data;
   }
@@ -227,21 +228,35 @@
       const msg = JSON.parse(ev.data);
       if (msg.type === 'order') { upsert(msg.order); render(); }
     };
-    ws.onclose = () => { $('conn').classList.remove('on'); setTimeout(connect, 2000); };
+    ws.onclose = () => {
+      $('conn').classList.remove('on');
+      KDS.checkSession();
+      setTimeout(connect, 2000);
+    };
     ws.onerror = () => ws.close();
   }
 
   async function init() {
     ({ stations } = await api('/api/config'));
     if (!stationId) {
+      const { user, roles } = await KDS.me();
       $('startOverlay').classList.add('hidden');
       $('board').classList.add('hidden');
       document.querySelector('.actions').classList.add('hidden');
       $('picker').classList.remove('hidden');
+      $('stationName').textContent = 'KDS';
+      $('counts').textContent = `${user.name} · ${roles[user.role]}`;
+      const links = [];
+      if (user.role !== 'kitchen') links.push(['/pos', 'Λήψη παραγγελιών', 'primary']);
+      if (user.role === 'admin') {
+        links.push(['/admin/stats', 'Στατιστικά'], ['/admin/menu', 'Διαχείριση μενού'], ['/admin/users', 'Χρήστες']);
+      }
       $('pickerGrid').innerHTML = stations.map((s) => `<a class="btn" href="?station=${encodeURIComponent(s.id)}">${esc(s.name)}</a>`).join('')
-        + '<a class="btn ghost" href="?station=expo">Expo (πάσο)</a>'
-        + '<a class="btn ghost" href="/pos">Λήψη παραγγελιών</a>'
-        + '<a class="btn ghost" href="/admin/menu">Διαχείριση μενού</a>';
+        + '<a class="btn" href="?station=expo">Expo (πάσο)</a>'
+        + links.map(([href, label]) => `<a class="btn ghost" href="${href}">${label}</a>`).join('')
+        + '<button class="btn ghost" id="logoutBtn">Αποσύνδεση</button>';
+      $('logoutBtn').addEventListener('click', KDS.logout);
+      if (params.get('denied')) KDS.toast('Δεν έχεις πρόσβαση σε εκείνη τη σελίδα', 'err');
       return;
     }
     station = stations.find((s) => s.id === stationId) || null;

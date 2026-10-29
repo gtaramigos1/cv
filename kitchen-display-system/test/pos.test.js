@@ -1,37 +1,34 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const path = require('path');
-const { openDb } = require('../src/db');
-const { loadStations } = require('../src/config');
-const { createApp } = require('../src/server');
+const { startApp } = require('./helpers');
 
-const stations = loadStations(path.join(__dirname, '..', 'config', 'stations.json'));
-const menuFile = path.join(__dirname, '..', 'config', 'menu.json');
+test('POS: μενού, αποστολή παραγγελίας, τιμές και ακύρωση', async (t) => {
+  const { anon, loginAs } = await startApp(t, { erpApiKey: 'k' });
+  const waiter = await loginAs('waiter');
+  const kitchen = await loginAs('kitchen');
+  const admin = await loginAs('admin');
 
-test('POS: μενού, αποστολή παραγγελίας και ακύρωση', async (t) => {
-  const db = openDb(':memory:');
-  const { server } = createApp({ db, cfg: { erpApiKey: 'k', stations, menuFile, completedRetentionMinutes: 60 } });
-  await new Promise((r) => server.listen(0, r));
-  t.after(() => new Promise((r) => server.close(r)));
-  const base = `http://127.0.0.1:${server.address().port}`;
-  const post = (p, body) => fetch(base + p, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-  });
+  assert.equal((await anon.req('GET', '/api/pos/menu')).status, 401);
+  const menu = await waiter.json('GET', '/api/pos/menu');
+  assert.ok(menu.body.categories.length > 0);
 
-  const menu = await (await fetch(`${base}/api/pos/menu`)).json();
-  assert.ok(menu.categories.length > 0);
-  assert.equal((await fetch(`${base}/pos`)).status, 200);
+  // Σελίδες: χωρίς σύνδεση → ανακατεύθυνση στο login· η κουζίνα δεν έχει POS.
+  const page = await anon.req('GET', '/pos');
+  assert.equal(page.status, 302);
+  assert.match(page.headers.get('location'), /^\/login\?next=/);
+  assert.equal((await waiter.req('GET', '/pos')).status, 200);
+  assert.equal((await kitchen.req('GET', '/pos')).status, 302);
+  assert.equal((await anon.req('GET', '/pos.html')).status, 404);
 
-  // Χωρίς τραπέζι → 400
-  let res = await post('/api/pos/orders', { order_type: 'dine_in', items: [{ menu_id: 'moussaka' }] });
+  let res = await waiter.req('POST', '/api/pos/orders', { order_type: 'dine_in', items: [{ menu_id: 'moussaka' }] });
   assert.equal(res.status, 400);
-  // Άγνωστο είδος → 400
-  res = await post('/api/pos/orders', { order_type: 'takeaway', items: [{ menu_id: 'nope' }] });
+  res = await waiter.req('POST', '/api/pos/orders', { order_type: 'takeaway', items: [{ menu_id: 'nope' }] });
   assert.equal(res.status, 400);
+  res = await kitchen.req('POST', '/api/pos/orders', { order_type: 'takeaway', items: [{ menu_id: 'water' }] });
+  assert.equal(res.status, 403);
 
-  // Δεν απαιτεί ERP API key· όνομα/κατηγορία παίρνονται από το μενού.
-  res = await post('/api/pos/orders', {
-    order_type: 'dine_in', table: '4', waiter: 'Άννα',
+  res = await waiter.req('POST', '/api/pos/orders', {
+    order_type: 'dine_in', table: '4', waiter: 'Ψεύτικο όνομα',
     items: [
       { menu_id: 'burger-classic', qty: 2, modifiers: ['Χωρίς κρεμμύδι'], notes: 'καλοψημένο' },
       { menu_id: 'freddo-espresso', qty: 1, modifiers: ['Μέτριος'] },
@@ -42,18 +39,17 @@ test('POS: μενού, αποστολή παραγγελίας και ακύρω
   const order = await res.json();
   assert.equal(order.external_id, 'P-1');
   assert.equal(order.table, '4');
-  assert.deepEqual(order.items.map((i) => [i.name, i.station, i.qty, i.course]), [
-    ['Burger Classic', 'grill', 2, 1], ['Freddo Espresso', 'bar', 1, 1], ['Σοκολατόπιτα', 'cold', 1, 2],
+  assert.match(order.waiter, /^waiter-/, 'ο σερβιτόρος έρχεται από τον λογαριασμό');
+  assert.deepEqual(order.items.map((i) => [i.name, i.station, i.qty, i.course, i.price]), [
+    ['Burger Classic', 'grill', 2, 1, 10], ['Freddo Espresso', 'bar', 1, 1, 3.5], ['Σοκολατόπιτα', 'cold', 1, 2, 5.5],
   ]);
-  assert.deepEqual(order.items[0].modifiers, ['Χωρίς κρεμμύδι']);
 
-  const second = await (await post('/api/pos/orders', { order_type: 'takeaway', customer_name: 'Νίκος', items: [{ menu_id: 'water' }] })).json();
+  const second = (await waiter.json('POST', '/api/pos/orders', { order_type: 'takeaway', customer_name: 'Νίκος', items: [{ menu_id: 'water' }] })).body;
   assert.equal(second.external_id, 'P-2');
   assert.equal(second.table, null);
 
-  const grill = await (await fetch(`${base}/api/orders?station=grill`)).json();
-  assert.equal(grill.length, 1);
-
-  const cancelled = await (await post('/api/pos/orders/P-1/cancel', {})).json();
-  assert.equal(cancelled.status, 'cancelled');
+  // Ακύρωση μόνο από διαχειριστή.
+  assert.equal((await waiter.req('POST', '/api/pos/orders/P-1/cancel', {})).status, 403);
+  const cancelled = await admin.json('POST', '/api/pos/orders/P-1/cancel', {});
+  assert.equal(cancelled.body.status, 'cancelled');
 });

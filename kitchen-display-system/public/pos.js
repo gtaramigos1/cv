@@ -5,10 +5,6 @@
   const STATUS_LABEL = { new: 'Σε αναμονή', in_progress: 'Ετοιμάζεται', ready: 'ΕΤΟΙΜΟ', completed: 'Σερβιρίστηκε', cancelled: 'Ακυρώθηκε' };
   const COURSE_LABEL = { 1: '', 2: 'Μετά', 3: 'Στο τέλος' };
 
-  const store = {
-    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
-    set(k, v) { try { localStorage.setItem(k, v); } catch { /* χωρίς αποθήκευση */ } },
-  };
 
   let menu = { currency: '€', categories: [] };
   const menuById = new Map();
@@ -18,6 +14,7 @@
   let editing = null;
   const orders = new Map();
   let audioCtx = null;
+  let me = null; // συνδεδεμένος χρήστης
 
   const money = (n) => `${n.toFixed(2).replace('.', ',')} ${menu.currency || '€'}`;
 
@@ -26,6 +23,7 @@
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
     } : undefined);
     const data = await res.json().catch(() => ({}));
+    if (res.status === 401 && data.loginRequired) KDS.toLogin();
     if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
     return data;
   }
@@ -238,7 +236,6 @@
         order_type: orderType,
         table: $('table').value.trim(),
         customer_name: $('customer').value.trim(),
-        waiter: $('waiter').value.trim(),
         notes: $('orderNotes').value.trim(),
         priority: $('rush').checked ? 'rush' : 'normal',
         items: cart.map((l) => ({ menu_id: l.menuId, qty: l.qty, modifiers: l.modifiers, notes: l.notes, course: l.course })),
@@ -264,7 +261,7 @@
   const time = (iso) => (iso ? new Date(iso).toLocaleTimeString('el-GR', { hour: '2-digit', minute: '2-digit', hour12: false }) : '');
 
   function renderOrderCard(o) {
-    const canCancel = o.status === 'new' || o.status === 'in_progress';
+    const canCancel = me?.role === 'admin' && (o.status === 'new' || o.status === 'in_progress');
     return `<article class="ocard ${o.status === 'ready' ? 'ready' : ''}">
       <div class="ocard-head">
         <div><div class="no">#${esc(o.external_id)}</div><div class="meta">${where(o)}${o.waiter ? ' · ' + esc(o.waiter) : ''}</div></div>
@@ -322,7 +319,11 @@
       if (msg.type === 'order') onOrderUpdate(msg.order);
       if (msg.type === 'menu') loadMenu().catch(console.error);
     };
-    ws.onclose = () => { $('conn').classList.remove('on'); setTimeout(connect, 2000); };
+    ws.onclose = () => {
+      $('conn').classList.remove('on');
+      KDS.checkSession();
+      setTimeout(connect, 2000);
+    };
     ws.onerror = () => ws.close();
   }
 
@@ -335,8 +336,10 @@
     $('viewOrders').classList.toggle('hidden', t.dataset.view !== 'orders');
   });
 
-  $('waiter').value = store.get('pos.waiter') || '';
-  $('waiter').addEventListener('change', () => store.set('pos.waiter', $('waiter').value.trim()));
+  $('logoutBtn').addEventListener('click', () => {
+    if (cart.length && !confirm('Το καλάθι δεν έχει σταλεί. Αποσύνδεση;')) return;
+    KDS.logout();
+  });
 
   async function loadMenu() {
     menu = await api('/api/pos/menu');
@@ -354,6 +357,9 @@
   }
 
   async function init() {
+    ({ user: me } = await KDS.me());
+    $('userName').textContent = me.name;
+    if (me.role === 'admin') $('menuLink').classList.remove('hidden');
     await loadMenu();
     connect();
   }

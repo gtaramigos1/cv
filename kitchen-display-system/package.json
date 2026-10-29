@@ -5,8 +5,8 @@
   "description": "Kitchen Display System (KDS) με γενικό REST/Webhook API για σύνδεση με οποιοδήποτε ERP",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "node --watch src/server.js",
+    "start": "node --disable-warning=ExperimentalWarning src/server.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch src/server.js",
     "simulate": "node scripts/simulate.js",
     "test": "node --test test/*.test.js"
   },

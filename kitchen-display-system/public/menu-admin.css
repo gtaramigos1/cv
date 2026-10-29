@@ -69,7 +69,6 @@ select.input { appearance: auto; }
 .add-item { width: 100%; border: 1px dashed var(--line); background: transparent; color: var(--muted); }
 .add-item:hover { color: var(--text); border-color: var(--accent); }
 
-.pin-error { color: var(--late); min-height: 1.2em; font-weight: 600; }
 
 /* ---------- Κινητό / μικρές οθόνες ---------- */
 @media (max-width: 860px) {

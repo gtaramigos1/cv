@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Στατιστικά</title>
+  <link rel="stylesheet" href="/pos.css">
+  <link rel="stylesheet" href="/stats.css">
+</head>
+<body>
+  <header class="topbar">
+    <strong>Στατιστικά</strong>
+    <nav class="admin-nav" id="adminNav"></nav>
+  </header>
+
+  <main class="page">
+    <div class="wrap" id="wrap">
+      <!-- Φίλτρο διαστήματος: μία γραμμή πάνω από όλα -->
+      <div class="filters">
+        <div class="presets" id="presets">
+          <button data-preset="today">Σήμερα</button>
+          <button data-preset="yesterday">Χθες</button>
+          <button data-preset="7">7 ημέρες</button>
+          <button data-preset="30">30 ημέρες</button>
+          <button data-preset="month">Αυτός ο μήνας</button>
+        </div>
+        <div class="custom">
+          <input type="date" id="from" aria-label="Από">
+          <span>–</span>
+          <input type="date" id="to" aria-label="Έως">
+        </div>
+      </div>
+
+      <section class="kpis" id="kpis"></section>
+      <p class="note hidden" id="note"></p>
+
+      <section class="card">
+        <div class="card-head"><h2>Παραγγελίες ανά ώρα</h2><span class="sub" id="hourSub"></span></div>
+        <div class="chart" id="hourChart"></div>
+        <details><summary>Πίνακας</summary><div id="hourTable"></div></details>
+      </section>
+
+      <section class="card" id="dayCard">
+        <div class="card-head"><h2>Τζίρος ανά ημέρα</h2><span class="sub">σε €</span></div>
+        <div class="chart" id="dayChart"></div>
+        <details><summary>Πίνακας</summary><div id="dayTable"></div></details>
+      </section>
+
+      <div class="grid2">
+        <section class="card">
+          <div class="card-head"><h2>Χρόνος ετοιμασίας ανά πόστο</h2><span class="sub">μέσος όρος, λεπτά</span></div>
+          <div id="stations"></div>
+        </section>
+        <section class="card">
+          <div class="card-head"><h2>Δημοφιλέστερα είδη</h2><span class="sub">τεμάχια</span></div>
+          <div id="topItems"></div>
+        </section>
+      </div>
+
+      <div class="grid2">
+        <section class="card">
+          <div class="card-head"><h2>Ανά σερβιτόρο</h2></div>
+          <div id="waiters"></div>
+        </section>
+        <section class="card">
+          <div class="card-head"><h2>Ανά τύπο παραγγελίας</h2></div>
+          <div id="types"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div class="tooltip hidden" id="tooltip" role="tooltip"><strong id="ttValue"></strong><span id="ttLabel"></span></div>
+
+  <script src="/common.js"></script>
+  <script src="/stats.js"></script>
+</body>
+</html>

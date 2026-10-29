@@ -2,4 +2,3 @@ node_modules/
 data/
 .env
 config/menu.backup.json
-config/menu.json.tmp
