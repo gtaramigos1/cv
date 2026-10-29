@@ -1,7 +1,8 @@
 // Προσομοιώνει ένα ERP που στέλνει παραγγελίες στο KDS.
 // Χρήση: node scripts/simulate.js [πλήθος] [διάστημα_σε_δευτερόλεπτα]
-const BASE = process.env.KDS_URL || 'http://localhost:3000';
-const KEY = process.env.ERP_API_KEY || '';
+const BASE = (process.env.KDS_URL || 'http://localhost:3000').trim();
+// trim: στο cmd των Windows το `set X=y && ...` αφήνει κενό στο τέλος της τιμής.
+const KEY = (process.env.ERP_API_KEY || '').trim();
 const count = Number(process.argv[2] || 5);
 const intervalSec = Number(process.argv[3] || 4);
 

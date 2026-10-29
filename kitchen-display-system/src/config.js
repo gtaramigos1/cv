@@ -16,11 +16,12 @@ function loadStations(file) {
 const config = {
   port: Number(process.env.PORT || 3000),
   dbFile: process.env.KDS_DB || path.join(__dirname, '..', 'data', 'kds.sqlite'),
-  // Κλειδί που πρέπει να στέλνει το ERP (Authorization: Bearer <key> ή X-API-Key)
-  erpApiKey: process.env.ERP_API_KEY || '',
+  // Κλειδί που πρέπει να στέλνει το ERP (Authorization: Bearer <key> ή X-API-Key).
+  // trim: στο cmd των Windows το `set X=y && ...` αφήνει κενό στο τέλος της τιμής.
+  erpApiKey: (process.env.ERP_API_KEY || '').trim(),
   // Πού στέλνει το KDS ενημερώσεις κατάστασης πίσω στο ERP (κενό = απενεργοποιημένο)
-  erpWebhookUrl: process.env.ERP_WEBHOOK_URL || '',
-  erpWebhookSecret: process.env.ERP_WEBHOOK_SECRET || '',
+  erpWebhookUrl: (process.env.ERP_WEBHOOK_URL || '').trim(),
+  erpWebhookSecret: (process.env.ERP_WEBHOOK_SECRET || '').trim(),
   // Μετά από πόσα λεπτά κρύβονται οι ολοκληρωμένες παραγγελίες από το recall
   completedRetentionMinutes: Number(process.env.KDS_COMPLETED_RETENTION_MIN || 120),
   stations: loadStations(process.env.KDS_STATIONS_FILE || path.join(__dirname, '..', 'config', 'stations.json')),

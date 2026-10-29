@@ -34,7 +34,7 @@ function createApp({ db, cfg = config }) {
   function requireErpKey(req, res, next) {
     if (!cfg.erpApiKey) return next();
     const header = req.get('authorization') || '';
-    const key = header.startsWith('Bearer ') ? header.slice(7) : req.get('x-api-key') || '';
+    const key = (header.startsWith('Bearer ') ? header.slice(7) : req.get('x-api-key') || '').trim();
     if (!safeEqual(key, cfg.erpApiKey)) return res.status(401).json({ error: 'Μη έγκυρο API key' });
     next();
   }
