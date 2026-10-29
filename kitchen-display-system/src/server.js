@@ -7,7 +7,8 @@ const { config } = require('./config');
 const { openDb } = require('./db');
 const { createOrderService, OrderError } = require('./orders');
 const { startWebhookDispatcher } = require('./erpWebhook');
-const { createPosRouter } = require('./pos');
+const { createPosRouter, createMenuAdminRouter } = require('./pos');
+const { MenuError } = require('./menu');
 
 function safeEqual(a, b) {
   const ab = Buffer.from(a);
@@ -20,10 +21,11 @@ function createApp({ db, cfg = config }) {
   const server = http.createServer(app);
   const wss = new WebSocketServer({ server, path: '/ws' });
 
-  function broadcast(order) {
-    const msg = JSON.stringify({ type: 'order', order });
+  function send(payload) {
+    const msg = JSON.stringify(payload);
     for (const client of wss.clients) if (client.readyState === 1) client.send(msg);
   }
+  const broadcast = (order) => send({ type: 'order', order });
 
   const orders = createOrderService(db, cfg.stations, { onChange: broadcast });
   const stationIds = new Set(cfg.stations.stations.map((s) => s.id));
@@ -62,10 +64,18 @@ function createApp({ db, cfg = config }) {
   app.use('/api/erp', erp);
 
   // ---------- Λήψη παραγγελιών από το κατάστημα (/pos) ----------
-  app.use('/api/pos', createPosRouter({
-    db, orders, menuFile: cfg.menuFile || path.join(__dirname, '..', 'config', 'menu.json'),
-  }));
+  const menuFile = cfg.menuFile || path.join(__dirname, '..', 'config', 'menu.json');
+  app.use('/api/pos', createPosRouter({ db, orders, menuFile }));
   app.get('/pos', (req, res) => res.sendFile(path.join(__dirname, '..', 'public', 'pos.html')));
+
+  // ---------- Διαχείριση μενού (/admin/menu) ----------
+  app.use('/api/admin', createMenuAdminRouter({
+    menuFile,
+    stations: cfg.stations,
+    adminPin: cfg.adminPin,
+    onMenuChange: () => send({ type: 'menu' }), // τα POS ξαναφορτώνουν το μενού
+  }));
+  app.get('/admin/menu', (req, res) => res.sendFile(path.join(__dirname, '..', 'public', 'menu-admin.html')));
 
   // ---------- API για τις οθόνες κουζίνας ----------
   function stationParam(req) {
@@ -108,7 +118,7 @@ function createApp({ db, cfg = config }) {
 
   // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
-    if (err instanceof OrderError) return res.status(err.status).json({ error: err.message });
+    if (err instanceof OrderError || err instanceof MenuError) return res.status(err.status).json({ error: err.message });
     if (err.type === 'entity.parse.failed') return res.status(400).json({ error: 'Μη έγκυρο JSON' });
     console.error(err);
     res.status(500).json({ error: 'Εσωτερικό σφάλμα' });

@@ -67,12 +67,14 @@
     const cat = menu.categories.find((c) => c.id === activeCat);
     const counts = new Map();
     for (const l of cart) counts.set(l.menuId, (counts.get(l.menuId) || 0) + l.qty);
-    $('items').innerHTML = (cat ? cat.items : []).map((it) => `
-      <button class="item-btn" data-add="${esc(it.id)}">
+    $('items').innerHTML = (cat ? cat.items : []).map((it) => {
+      const out = it.available === false;
+      return `<button class="item-btn ${out ? 'soldout' : ''}" data-add="${esc(it.id)}" ${out ? 'disabled' : ''}>
         ${counts.get(it.id) ? `<span class="count">${counts.get(it.id)}</span>` : ''}
         <span class="name">${esc(it.name)}</span>
-        <span class="price">${typeof it.price === 'number' ? money(it.price) : ''}</span>
-      </button>`).join('');
+        <span class="price">${out ? 'Εξαντλήθηκε' : typeof it.price === 'number' ? money(it.price) : ''}</span>
+      </button>`;
+    }).join('');
   }
 
   $('cats').addEventListener('click', (e) => {
@@ -318,6 +320,7 @@
     ws.onmessage = (ev) => {
       const msg = JSON.parse(ev.data);
       if (msg.type === 'order') onOrderUpdate(msg.order);
+      if (msg.type === 'menu') loadMenu().catch(console.error);
     };
     ws.onclose = () => { $('conn').classList.remove('on'); setTimeout(connect, 2000); };
     ws.onerror = () => ws.close();
@@ -335,12 +338,23 @@
   $('waiter').value = store.get('pos.waiter') || '';
   $('waiter').addEventListener('change', () => store.set('pos.waiter', $('waiter').value.trim()));
 
-  async function init() {
+  async function loadMenu() {
     menu = await api('/api/pos/menu');
+    menuById.clear();
     for (const c of menu.categories) for (const it of c.items) menuById.set(it.id, it);
-    activeCat = menu.categories[0]?.id || null;
+    if (!menu.categories.some((c) => c.id === activeCat)) activeCat = menu.categories[0]?.id || null;
+    // Είδη του καλαθιού που αφαιρέθηκαν ή εξαντλήθηκαν στο μεταξύ βγαίνουν από το καλάθι.
+    const gone = cart.filter((l) => !menuById.has(l.menuId) || menuById.get(l.menuId).available === false);
+    if (gone.length) {
+      cart = cart.filter((l) => !gone.includes(l));
+      toast(`Αφαιρέθηκαν από το καλάθι (μη διαθέσιμα): ${gone.map((l) => menuById.get(l.menuId)?.name || l.menuId).join(', ')}`, 'err');
+    }
     renderCats();
     renderCart();
+  }
+
+  async function init() {
+    await loadMenu();
     connect();
   }
 

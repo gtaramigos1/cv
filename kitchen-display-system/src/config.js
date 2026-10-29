@@ -24,6 +24,8 @@ const config = {
   erpWebhookSecret: (process.env.ERP_WEBHOOK_SECRET || '').trim(),
   // Μετά από πόσα λεπτά κρύβονται οι ολοκληρωμένες παραγγελίες από το recall
   completedRetentionMinutes: Number(process.env.KDS_COMPLETED_RETENTION_MIN || 120),
+  // PIN για τη σελίδα διαχείρισης μενού (κενό = χωρίς PIN)
+  adminPin: (process.env.KDS_ADMIN_PIN || '').trim(),
   menuFile: process.env.KDS_MENU_FILE || path.join(__dirname, '..', 'config', 'menu.json'),
   stations: loadStations(process.env.KDS_STATIONS_FILE || path.join(__dirname, '..', 'config', 'stations.json')),
 };

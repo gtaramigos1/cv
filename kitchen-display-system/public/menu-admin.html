@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Διαχείριση Μενού</title>
+  <link rel="stylesheet" href="/pos.css">
+  <link rel="stylesheet" href="/menu-admin.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="admin-title">
+      <strong>Διαχείριση μενού</strong>
+      <span class="save-state" id="saveState"></span>
+    </div>
+    <div class="top-right">
+      <a class="link" href="/pos">POS</a>
+      <a class="link" href="/">KDS</a>
+      <button class="btn ghost" id="revertBtn" disabled>Αναίρεση</button>
+      <button class="btn primary" id="saveBtn" disabled>Αποθήκευση</button>
+    </div>
+  </header>
+
+  <main class="admin">
+    <aside class="cat-list">
+      <ul id="catList"></ul>
+      <button class="btn ghost add" id="addCat">+ Νέα κατηγορία</button>
+    </aside>
+
+    <section class="cat-editor" id="catEditor"></section>
+  </main>
+
+  <div class="overlay hidden" id="pinDialog">
+    <form class="dialog" id="pinForm">
+      <h2>PIN διαχείρισης</h2>
+      <input id="pinInput" class="big-input" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN">
+      <div class="pin-error" id="pinError"></div>
+      <button class="btn primary" type="submit">Είσοδος</button>
+    </form>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+
+  <script src="/menu-admin.js"></script>
+</body>
+</html>

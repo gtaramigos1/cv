@@ -1,0 +1,88 @@
+/* Συμπληρώνει το pos.css για τη σελίδα διαχείρισης μενού. */
+
+body { overflow: hidden; }
+.admin-title { display: flex; align-items: baseline; gap: 12px; font-size: 1.15rem; }
+.save-state { font-size: 0.9rem; color: var(--muted); }
+.save-state.dirty { color: var(--warn); font-weight: 700; }
+.save-state.saved { color: var(--ok); }
+.topbar .btn { min-height: 42px; padding: 8px 16px; }
+
+.admin { flex: 1; min-height: 0; display: grid; grid-template-columns: 280px minmax(0, 1fr); }
+
+/* ---------- Κατηγορίες ---------- */
+.cat-list { background: var(--panel); border-right: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; }
+.cat-list ul { list-style: none; margin: 0; padding: 8px; overflow-y: auto; flex: 1; }
+.cat-row {
+  display: flex; align-items: center; gap: 6px; padding: 10px 10px; border-radius: 8px; cursor: pointer; margin-bottom: 2px;
+}
+.cat-row:hover { background: var(--panel-2); }
+.cat-row.active { background: var(--accent); color: #fff; }
+.cat-row .cname { flex: 1; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cat-row .ccount { font-size: 0.85rem; opacity: 0.75; }
+.cat-list .add { margin: 8px; }
+
+.icon-btn {
+  border: 0; background: var(--panel-3); color: var(--text); border-radius: 6px; width: 34px; height: 34px;
+  cursor: pointer; font-size: 0.95rem; flex: none;
+}
+.icon-btn:disabled { opacity: 0.3; cursor: default; }
+.icon-btn.danger { background: transparent; color: var(--late); border: 1px solid var(--line); }
+.cat-row.active .icon-btn { background: rgba(255,255,255,0.18); color: #fff; }
+
+/* ---------- Επεξεργασία κατηγορίας ---------- */
+.cat-editor { overflow-y: auto; padding: 16px 20px 40px; }
+.cat-editor .empty { color: var(--muted); text-align: center; margin-top: 15vh; }
+.cat-head { display: grid; grid-template-columns: 1fr 220px auto; gap: 12px; align-items: end; margin-bottom: 18px; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field > span { color: var(--muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.input, select.input {
+  background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-height: 44px; width: 100%;
+}
+.input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.input.invalid { border-color: var(--late); }
+select.input { appearance: auto; }
+
+.items-title { display: flex; justify-content: space-between; align-items: center; margin: 4px 0 10px; }
+.items-title h3 { margin: 0; font-size: 1rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+.item-card {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin-bottom: 10px;
+  display: grid; grid-template-columns: minmax(0, 1fr) 110px 180px auto; gap: 10px 12px; align-items: end;
+}
+.item-card.off { opacity: 0.65; }
+.item-card .mods-row { grid-column: 1 / -1; }
+.item-card .actions { display: flex; gap: 6px; }
+
+.switch { display: flex; align-items: center; gap: 8px; cursor: pointer; min-height: 44px; font-weight: 600; white-space: nowrap; }
+.switch input { width: 20px; height: 20px; accent-color: var(--ok); }
+
+.mods { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.mod {
+  display: inline-flex; align-items: center; gap: 4px; background: var(--panel-3); border-radius: 999px;
+  padding: 4px 4px 4px 12px; font-size: 0.95rem;
+}
+.mod button { border: 0; background: none; color: var(--muted); cursor: pointer; width: 26px; height: 26px; border-radius: 50%; font-size: 1rem; }
+.mod button:hover { background: var(--late); color: #fff; }
+.mod-input { background: transparent; border: 1px dashed var(--line); border-radius: 999px; padding: 6px 12px; width: 240px; max-width: 100%; }
+.mod-input:focus { outline: none; border-color: var(--accent); border-style: solid; }
+
+.add-item { width: 100%; border: 1px dashed var(--line); background: transparent; color: var(--muted); }
+.add-item:hover { color: var(--text); border-color: var(--accent); }
+
+.pin-error { color: var(--late); min-height: 1.2em; font-weight: 600; }
+
+/* ---------- Κινητό / μικρές οθόνες ---------- */
+@media (max-width: 860px) {
+  .admin { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .cat-list { border-right: 0; border-bottom: 1px solid var(--line); flex-direction: row; align-items: center; min-width: 0; }
+  .cat-list ul { display: flex; gap: 6px; overflow-x: auto; overflow-y: hidden; padding: 8px; min-width: 0; }
+  .cat-row { flex: none; margin: 0; background: var(--panel-2); }
+  .cat-row .icon-btn { display: none; }
+  .cat-list .add { flex: none; margin: 8px 8px 8px 0; white-space: nowrap; }
+  .cat-editor { padding: 12px 12px 40px; }
+  .cat-head { grid-template-columns: 1fr; }
+  .item-card { grid-template-columns: minmax(0, 1fr) 96px; }
+  .item-card .station-field, .item-card .actions { grid-column: 1 / -1; }
+  .item-card .actions .switch { margin-right: auto; }
+  .admin-title strong { display: none; }
+}

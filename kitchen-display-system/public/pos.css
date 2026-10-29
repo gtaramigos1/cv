@@ -74,7 +74,9 @@ button, input, textarea { font: inherit; color: inherit; }
   padding: 14px 12px; min-height: 92px; text-align: left; display: flex; flex-direction: column; justify-content: space-between;
   border: 1px solid var(--line);
 }
-.item-btn:active { background: var(--panel-3); }
+.item-btn:active:not(:disabled) { background: var(--panel-3); }
+.item-btn.soldout { opacity: 0.4; cursor: not-allowed; }
+.item-btn.soldout .price { color: var(--late); font-weight: 700; }
 .item-btn .name { font-weight: 700; font-size: 1.05rem; }
 .item-btn .price { color: var(--muted); }
 .item-btn .count {
